@@ -91,16 +91,6 @@ class Position:
         return self._topos
 
 
-class AsterEphemerides:
-    def __init__(self,
-                 rise_time: Union[datetime, None],
-                 culmination_time: Union[datetime, None],
-                 set_time: Union[datetime, None]):
-        self.rise_time = rise_time
-        self.culmination_time = culmination_time
-        self.set_time = set_time
-
-
 class Object(ABC):
     """
     An astronomical object.
@@ -109,7 +99,6 @@ class Object(ABC):
     def __init__(self,
                  name: str,
                  skyfield_name: str,
-                 ephemerides: AsterEphemerides or None = None,
                  radius: float = None):
         """
         Initialize an astronomical object
@@ -122,7 +111,6 @@ class Object(ABC):
         self.name = name
         self.skyfield_name = skyfield_name
         self.radius = radius
-        self.ephemerides = ephemerides
 
     def get_skyfield_object(self) -> SkfPlanet:
         return get_skf_objects()[self.skyfield_name]
@@ -226,6 +214,18 @@ def skyfield_to_moon_phase(times: [Time], vals: [int], now: Time) -> Union[MoonP
     return MoonPhase(current_phase,
                      current_phase_time.utc_datetime() if current_phase_time is not None else None,
                      next_phase_time.utc_datetime() if next_phase_time is not None else None)
+
+
+class AsterEphemerides:
+    def __init__(self,
+                 rise_time: Union[datetime, None],
+                 culmination_time: Union[datetime, None],
+                 set_time: Union[datetime, None],
+                 object: Object):
+        self.rise_time = rise_time
+        self.culmination_time = culmination_time
+        self.set_time = set_time
+        self.object = object
 
 
 MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']

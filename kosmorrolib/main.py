@@ -24,13 +24,15 @@ import sys
 from datetime import date
 from termcolor import colored
 
-from kosmorrolib.version import VERSION
-from kosmorrolib import dumper
-from kosmorrolib import core
-from kosmorrolib import events
-from kosmorrolib.i18n import _
-from .ephemerides import EphemeridesComputer, Position
+from . import dumper
+from . import core
+from . import events
+
+from .data import Position
 from .exceptions import UnavailableFeatureError
+from .i18n import _
+from . import ephemerides
+from .version import VERSION
 
 
 def main():
@@ -63,8 +65,8 @@ def main():
                             "coordinate."), 'yellow'))
 
     try:
-        ephemeris = EphemeridesComputer(position)
-        ephemerides = ephemeris.compute_ephemerides(compute_date)
+        eph = ephemerides.get_ephemerides(date=compute_date, position=position)
+        moon_phase = ephemerides.get_moon_phase(compute_date)
 
         events_list = events.search_events(compute_date)
 
@@ -75,7 +77,7 @@ def main():
         elif timezone is None:
             timezone = 0
 
-        selected_dumper = output_formats[args.format](ephemerides, events_list,
+        selected_dumper = output_formats[args.format](eph, moon_phase, events_list,
                                                       date=compute_date, timezone=timezone,
                                                       with_colors=args.colors)
         output = selected_dumper.to_string()

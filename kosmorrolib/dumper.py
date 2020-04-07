@@ -40,9 +40,10 @@ TIME_FORMAT = _('{hours}:{minutes}').format(hours='%H', minutes='%M')
 
 
 class Dumper(ABC):
-    def __init__(self, ephemeris: dict, events: [Event], date: datetime.date = datetime.date.today(), timezone: int = 0,
-                 with_colors: bool = True):
+    def __init__(self, ephemeris: [AsterEphemerides], moon_phase: [MoonPhase], events: [Event],
+                 date: datetime.date = datetime.date.today(), timezone: int = 0, with_colors: bool = True):
         self.ephemeris = ephemeris
+        self.moon_phase = moon_phase
         self.events = events
         self.date = date
         self.timezone = timezone
